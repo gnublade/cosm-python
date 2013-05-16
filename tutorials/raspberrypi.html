@@ -1,0 +1,557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Raspberry PI &mdash; Xively Python 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Xively Python 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Tutorials" href="index.html" />
+    <link rel="next" title="Examples" href="../examples.html" />
+    <link rel="prev" title="Tutorials" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Tutorials"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Xively Python 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="raspberry-pi">
+<h1>Raspberry PI<a class="headerlink" href="#raspberry-pi" title="Permalink to this headline">¶</a></h1>
+<p>Try a Linux project with the Pi, and hook it up to Xively</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The Raspberry Pi (RPi) is a $35, credit-card sized computer that runs
+a full Linux distribution, and can be used for many of the things that
+you might use a normal desktop PC to do.  You can plug in USB
+peripherals (keyboards, mice, etc.), output video via HDMI and DVI, or
+even composite out to an old analogue TV; and it can be used for many of
+the things that you might use a normal desktop PC to do.</p>
+<p>Most importantly, it offers a capable and affordable prototyping
+platform for a wide range of IoT products, with onboard ethernet (in the
+Model B), plus a bunch of available GPIO (general purpose input/output)
+pins. And because it runs a full Linux distribution, you have available
+the enormous range of Linux libraries, software, and all other available
+tools.</p>
+<p>The GPIO pins have true general purpose input/outputs, I2C interface
+pins (2-pin, SCL, SDA), SPI (MOSI, MISO, SCKL, select), serial Rx and Tx
+for communication with serial peripherals, 2PWM and PPM.</p>
+<div class="section" id="specs-overview-raspberry-model-a">
+<h3>Specs Overview: (Raspberry Model A)<a class="headerlink" href="#specs-overview-raspberry-model-a" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="52%" />
+<col width="48%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>CPU</td>
+<td>Broadcom BCM2835</td>
+</tr>
+<tr class="row-even"><td>Operating Voltage</td>
+<td>5V</td>
+</tr>
+<tr class="row-odd"><td>Digital I/O Pins</td>
+<td>GPIO</td>
+</tr>
+<tr class="row-even"><td>Flash Memory</td>
+<td>256 Mb RAM</td>
+</tr>
+<tr class="row-odd"><td>Clock Speed</td>
+<td>700 MHz</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="components">
+<h2>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h2>
+<p>To build this tutorial, you&#8217;ll need the following components:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="76%" />
+<col width="24%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Raspberry Pi (Model B)</td>
+<td>$35</td>
+</tr>
+<tr class="row-even"><td>4GB SD Card</td>
+<td>$8</td>
+</tr>
+<tr class="row-odd"><td>Ethernet cable</td>
+<td>$3</td>
+</tr>
+<tr class="row-even"><td>Micro USB 5V Power adapter</td>
+<td>$5</td>
+</tr>
+<tr class="row-odd"><td>Video output cable</td>
+<td>OPTIONAL</td>
+</tr>
+<tr class="row-even"><td>USB keyboard</td>
+<td>OPTIONAL</td>
+</tr>
+<tr class="row-odd"><td>Monitor/TV</td>
+<td>OPTIONAL</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="set-up-your-pi">
+<h2>Set up your Pi<a class="headerlink" href="#set-up-your-pi" title="Permalink to this headline">¶</a></h2>
+<p>If you already have your RPi up and running, you can skip right ahead to
+<a class="reference internal" href="#code"><em>Write some code!</em></a>.  But if you are using your RPi for the first
+time, then read on for some suggestions about getting the board up and
+running.</p>
+<p>Before you can start using your board, you need to prepare your SD card
+with the operating system for the Raspberry Pi. For our purposes we
+recommend sticking with the default distribution, which is called
+Raspbian. This is a Linux distribution based on the popular Debian
+distribution, but optimized for the Rasberry Pi. You’ll find download
+and installation instructions on the Raspberry Pi downloads page:</p>
+<p><a class="reference external" href="http://www.raspberrypi.org/downloads">http://www.raspberrypi.org/downloads</a></p>
+<p>Note: It is possible to purchase SD cards which are preloaded with the
+Raspberry Pi operating system, but if you can&#8217;t or don&#8217;t want to this,
+then the initialization steps to create a new bootable image from the
+downloaded snapshot, are fairly straightforward.</p>
+<p>Once you have an initialized SD card you need to:</p>
+<ol class="arabic simple">
+<li>Insert the SD card into the RPi (it should be inserted with the label
+facing down).</li>
+<li>Plug an ethernet cable into the RPi to give it access to the web.</li>
+<li>Connect the 5V power adapter to the RPi’s micro USB port.</li>
+</ol>
+<p>As soon as the power supply is connected the red LED marked “PWR” will
+turn on.  The other LEDs will blink in various patterns, and after
+approximately 30 seconds, they’ll look like this:</p>
+<img alt="http://xively.com/images/tutorials/pi/booted_board.jpg" src="http://xively.com/images/tutorials/pi/booted_board.jpg" />
+<p>which means the RPi has booted and is ready to go.</p>
+<p>If you’ve had the board hooked up to a monitor or TV, then you’ll have
+seen some action during this boot process, and once the board has booted
+for the first time, you should find yourself in the <tt class="docutils literal"><span class="pre">raspi-config</span></tt>
+window. This little script is designed to help you to configure your
+board, and lets you do things like set the locale and time zone and many
+other admin tasks. If you are trying to set up the board headless (i.e.
+without an attached monitor), then read on.  Otherwise, skip ahead to
+[Configuring the Raspberry Pi](#configure).</p>
+<p>If you <em>don’t</em> have an external monitor, you&#8217;ll instead need to
+configure the RPi by typed commands.  Doing this requires a little bit
+more work, but not too much. The only tricky part is finding out the IP
+address of your RPi so that you can connect to it via the SSH protocol,
+which lets you start the configuration process. If your RPi is plugged
+into your router, then you should be able to obtain the IP address by
+opening the router control panel and looking for its list of attached
+devices. Alternatively, it’s possible to use a tool like nmap to scan
+your LAN and find the IP address of the RPi.</p>
+<p>Once you have its IP address, then you should SSH into the box:</p>
+<div class="highlight-python"><pre>$ ssh pi@192.168.0.13</pre>
+</div>
+<p>When you get a login prompt, login with the password ‘raspberry’. You
+will then find yourself at a command prompt on the machine that looks
+something like this:</p>
+<div class="highlight-python"><pre>pi@raspberrypi ~ $</pre>
+</div>
+<p>At this point you should run:</p>
+<div class="highlight-python"><pre>$ sudo raspi-config</pre>
+</div>
+<p>then you’ll be at the same stage as those booting with an attached
+monitor.</p>
+<div class="section" id="configure-your-pi-configure">
+<h3>Configure your Pi {#configure}<a class="headerlink" href="#configure-your-pi-configure" title="Permalink to this headline">¶</a></h3>
+<p>At this point you can optionally change settings such as time zone and
+locale if you want, but the one important thing you should do is:</p>
+<ol class="arabic simple">
+<li>Select <tt class="docutils literal"><span class="pre">expand_rootfs</span></tt> to expand the root filesystem to use all of
+the SD card.</li>
+<li>Answer yes to a reboot.</li>
+<li>When the RPi boots back up, login again.</li>
+</ol>
+<p>At this point we’re ready to start developing our tutorial application.</p>
+</div>
+</div>
+<div class="section" id="write-some-code">
+<span id="code"></span><h2>Write some code!<a class="headerlink" href="#write-some-code" title="Permalink to this headline">¶</a></h2>
+<p>We’re going to try writing a little Python demo app that reads the
+current load average from the board, and then publishes this value to
+a Xively feed. We’re going to assume in writing this that you are
+comfortable with editing code on the command line using an editor like
+Vim or Emacs, but if you have a monitor and attached keyboard/mouse, you
+can of course start the full desktop environment on the RPi, and use
+a more visual editor to edit the code.</p>
+<p>However, even if you aren&#8217;t editing the code directly from the command
+line, you will still need command line access, as there are some
+commands you&#8217;ll need to execute from the command line to get things
+working.</p>
+<p>We&#8217;ll also be assuming you are logged into your board as the <tt class="docutils literal"><span class="pre">pi</span></tt>
+user, as this is the default user account automatically set up on the
+board.  If you have created a new user account that you are using, then
+it&#8217;s fine to use that account instead, though you&#8217;ll need to make sure
+the account you are using also has super user permissions. Alternatively
+you can just use the <tt class="docutils literal"><span class="pre">pi</span></tt> account for any commands that start with
+<tt class="docutils literal"><span class="pre">sudo</span></tt>, and for everything else your non super user account is fine.</p>
+<div class="section" id="install-system-packages">
+<h3>Install system packages<a class="headerlink" href="#install-system-packages" title="Permalink to this headline">¶</a></h3>
+<p>Before we get started with our little example library, there are a few
+installation tasks you should probably do to get started.</p>
+<p>First of all, let&#8217;s update the system software:</p>
+<div class="highlight-python"><pre>$ sudo apt-get update
+$ sudo apt-get upgrade</pre>
+</div>
+<p>Your Raspberry Pi will already have a suitable version of Python
+installed, however you&#8217;ll also need to install the <a class="reference external" href="http://git-scm.com/">Git version control
+system</a>, to pull down the latest version of our
+library from Github. Fortunately on the Raspberry Pi this is as simple
+as running:</p>
+<div class="highlight-python"><pre>$ sudo apt-get install git</pre>
+</div>
+<p>Next let’s install some system level packages to that will let us build
+our little app in a clean way.</p>
+<div class="highlight-python"><pre>$ sudo apt-get install python-setuptools
+$ sudo easy_install pip
+$ sudo pip install virtualenv</pre>
+</div>
+<p>Now these packages are installed, we don&#8217;t need to install anything else
+at the system level.</p>
+</div>
+<div class="section" id="start-building-the-app">
+<h3>Start building the app<a class="headerlink" href="#start-building-the-app" title="Permalink to this headline">¶</a></h3>
+<p>Everything else we’re going to install at this point will be installed
+inside a <a class="reference external" href="https://pypi.python.org/pypi/virtualenv">virtualenv</a>. If you
+aren’t familiar with virtualenv, there are many resources on it
+elsewhere, and it&#8217;s worth getting to grips with it for python
+development. For our purposes however, you should be able to just follow
+along by copying the commands below.  The point is to create an isolated
+environment containing just the dependencies we need that doesn’t
+interfere with any other applications on the box.</p>
+<p>So first let&#8217;s create a directory in which we&#8217;re going to work:</p>
+<div class="highlight-python"><pre>$ mkdir xively_tutorial
+$ cd xively_tutorial</pre>
+</div>
+<p>We&#8217;ll create a new virtualenv within this directory:</p>
+<div class="highlight-python"><pre>$ virtualenv .envs/venv</pre>
+</div>
+<p>This creates an isolated python environment within the <tt class="docutils literal"><span class="pre">.envs/venv</span></tt>
+folder, but before we can start using it, we need to tell the current
+shell that this is the python environment we want to use. We do this by
+&#8216;activating&#8217; the virtualenv:</p>
+<div class="highlight-python"><pre>$ source .envs/venv/bin/activate</pre>
+</div>
+<p>At this prompt you should notice that your prompt has changed,
+indicating that we are now using the <tt class="docutils literal"><span class="pre">venv</span></tt> python.</p>
+<p>Now can go ahead and install the Xively python library within our
+virtualenv:</p>
+<div class="highlight-python"><pre>$ pip install xively-python</pre>
+</div>
+<p>This command should run for a few seconds, and you should see that it
+installs the Xively library, plus any dependencies that it requires, and
+you should also note that these dependencies are installed locally into
+the virtualenv.</p>
+<p>At this point we&#8217;re almost ready to start writing our app, but before we
+do that we should create a Device and Feed on Xively.</p>
+</div>
+<div class="section" id="create-a-device-and-feed-on-xively">
+<h3>Create a Device and Feed on Xively<a class="headerlink" href="#create-a-device-and-feed-on-xively" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Open a web browser on your computer.</li>
+<li>Navigate to Develop.</li>
+<li>Add a new device. Call it “Raspberry Pi”, and set its privacy to
+‘private’.</li>
+<li>On the device workbench take note of the Feed I, and Development API
+key that were automatically created for you as we’ll need them to get
+the RPi publishing data to the feed.</li>
+</ol>
+</div>
+<div class="section" id="write-the-code">
+<h3>Write the code<a class="headerlink" href="#write-the-code" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Within the xively_tutorial directory, use your favourite editor to
+create a file called xively_tutorial.py.</li>
+<li>Enter the following code into xively_tutorial.py:</li>
+</ol>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">xively</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="c"># extract feed_id and api_key from environment variables</span>
+<span class="n">FEED_ID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;FEED_ID&quot;</span><span class="p">]</span>
+<span class="n">API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;API_KEY&quot;</span><span class="p">]</span>
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;DEBUG&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">false</span>
+
+<span class="c"># initialize api client</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">xively</span><span class="o">.</span><span class="n">XivelyAPIClient</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
+
+<span class="c"># function to read 1 minute load average from system uptime command</span>
+<span class="k">def</span> <span class="nf">read_loadavg</span><span class="p">():</span>
+  <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;Reading load average&quot;</span>
+  <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&quot;awk &#39;{print $1}&#39; /proc/loadavg&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c"># function to return a datastream object. This either creates a new datastream,</span>
+<span class="c"># or returns an existing one</span>
+<span class="k">def</span> <span class="nf">get_datastream</span><span class="p">(</span><span class="n">feed</span><span class="p">):</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">datastream</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;load_avg&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;Found existing datastream&quot;</span>
+    <span class="k">return</span> <span class="n">datastream</span>
+  <span class="k">except</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;Creating new datastream&quot;</span>
+    <span class="n">datastream</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;load_avg&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="s">&quot;load_01&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">datastream</span>
+
+<span class="c"># main program entry point - runs continuously updating our datastream with the</span>
+<span class="c"># current 1 minute load average</span>
+<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+  <span class="k">print</span> <span class="s">&quot;Starting Xively tutorial script&quot;</span>
+
+  <span class="n">feed</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">feeds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FEED_ID</span><span class="p">)</span>
+
+  <span class="n">datastream</span> <span class="o">=</span> <span class="n">get_datastream</span><span class="p">(</span><span class="n">feed</span><span class="p">)</span>
+  <span class="n">datastream</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="n">datastream</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="bp">None</span>
+
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">load_avg</span> <span class="o">=</span> <span class="n">read_loadavg</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+      <span class="k">print</span> <span class="s">&quot;Updating Xively feed with value: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">load_avg</span>
+
+    <span class="n">datastream</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="n">load_avg</span>
+    <span class="n">datastream</span><span class="o">.</span><span class="n">at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+    <span class="n">datastream</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">run</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+<p>Run the script:</p>
+<ol class="arabic simple">
+<li>Pass into the script as environment variables the Feed ID and API key
+you created earlier.</li>
+<li>Pass in a DEBUG environment variable so that the script is a bit more
+chatty about what it’s doing.</li>
+<li>Enter a command like this:</li>
+</ol>
+<div class="highlight-python"><pre>$ export FEED_ID=12345
+$ export API_KEY=9MzbRooFNPJIy3zxVNRPUPll4JGSAKxsMmg4STZHbzNKTT0g
+$ export DEBUG=true
+$ python xively_tutorial.py</pre>
+</div>
+<p>If all has gone according to plan the script should start without
+errors, and start printing out its debug messages.</p>
+<p>If you get any errors at this point, make sure that you have properly
+activated your virtualenv, and that the Xively library plus dependencies
+are all installed properly.</p>
+</div>
+</div>
+<div class="section" id="watch-the-workbench">
+<h2>Watch the Workbench<a class="headerlink" href="#watch-the-workbench" title="Permalink to this headline">¶</a></h2>
+<p>Hopefully you still have the device workbench still open in your
+browser, but if not than then reopen it. With the python script running
+on your Raspberry Pi you should now start to see requests coming through
+into the request log, and you should start to see the value of your
+load_avg channel updating in real time.</p>
+</div>
+<div class="section" id="take-this-code-and-run">
+<h2>Take this code and run!<a class="headerlink" href="#take-this-code-and-run" title="Permalink to this headline">¶</a></h2>
+<p>This starter code shows you the basics how to pull data from the
+Raspberry Pi, and send it to Xively using our Python library.  From
+here, the opportunities are endless. Give these ideas a try:</p>
+<ul class="simple">
+<li>Hook up some real sensors to the Raspberry Pi&#8217;s GPIO pins, and push
+this data to Xively.</li>
+<li>Get your python script running as a service so that it automatically
+runs when your RPi boots.</li>
+<li>Use your Raspberry Pi to subscribe to an existing feed over MQTT, and
+have it control or activate things in response to changes in that
+feed.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Raspberry PI</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#specs-overview-raspberry-model-a">Specs Overview: (Raspberry Model A)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#components">Components</a></li>
+<li><a class="reference internal" href="#set-up-your-pi">Set up your Pi</a><ul>
+<li><a class="reference internal" href="#configure-your-pi-configure">Configure your Pi {#configure}</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#write-some-code">Write some code!</a><ul>
+<li><a class="reference internal" href="#install-system-packages">Install system packages</a></li>
+<li><a class="reference internal" href="#start-building-the-app">Start building the app</a></li>
+<li><a class="reference internal" href="#create-a-device-and-feed-on-xively">Create a Device and Feed on Xively</a></li>
+<li><a class="reference internal" href="#write-the-code">Write the code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#watch-the-workbench">Watch the Workbench</a></li>
+<li><a class="reference internal" href="#take-this-code-and-run">Take this code and run!</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Tutorials</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../examples.html"
+                        title="next chapter">Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorials/raspberrypi.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../examples.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Tutorials"
+             >previous</a> |</li>
+        <li><a href="../index.html">Xively Python 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Xively Ltd.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
