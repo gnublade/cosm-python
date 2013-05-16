@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to Xively Python's documentation
-======================================
+========================================
 
 xively-python is a wrapper around Xively's REST API to make working with the
 connected object cloud easy and pythonic.
@@ -21,7 +21,7 @@ Example:
     >>> stream = feed.datastreams[0]
     >>> points = stream.datapoints.history(start=start, duration='1second')
     >>> list(points)  # doctest: +ELLIPSIS +IGNORE_UNICODE
-    [xively.Datapoint(datetime.datetime(2013, 1, 1, 14, 14, 55, 118845), '0.25741970'), ...]
+    [xively.Datapoint(datetime.datetime(...), '0.25741970'), ...]
 
     >>> # Uploading new points
     >>> import random
@@ -49,4 +49,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
