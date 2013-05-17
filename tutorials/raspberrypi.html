@@ -364,66 +364,74 @@ create a file called xively_tutorial.py.</li>
 57
 58
 59
-60</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+60
+61
+62
+63
+64</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">xively</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">xively</span>
 
 <span class="c"># extract feed_id and api_key from environment variables</span>
 <span class="n">FEED_ID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;FEED_ID&quot;</span><span class="p">]</span>
 <span class="n">API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;API_KEY&quot;</span><span class="p">]</span>
-<span class="n">DEBUG</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;DEBUG&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">false</span>
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&quot;DEBUG&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">False</span>
 
 <span class="c"># initialize api client</span>
 <span class="n">api</span> <span class="o">=</span> <span class="n">xively</span><span class="o">.</span><span class="n">XivelyAPIClient</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">)</span>
 
+
 <span class="c"># function to read 1 minute load average from system uptime command</span>
 <span class="k">def</span> <span class="nf">read_loadavg</span><span class="p">():</span>
-  <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
-    <span class="k">print</span> <span class="s">&quot;Reading load average&quot;</span>
-  <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&quot;awk &#39;{print $1}&#39; /proc/loadavg&quot;</span><span class="p">],</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Reading load average&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/proc/loadavg&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">loadavg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">loadavg</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
 
 <span class="c"># function to return a datastream object. This either creates a new datastream,</span>
 <span class="c"># or returns an existing one</span>
 <span class="k">def</span> <span class="nf">get_datastream</span><span class="p">(</span><span class="n">feed</span><span class="p">):</span>
-  <span class="k">try</span><span class="p">:</span>
-    <span class="n">datastream</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;load_avg&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
-      <span class="k">print</span> <span class="s">&quot;Found existing datastream&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">datastream</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;load_avg&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Found existing datastream&quot;</span>
+        <span class="k">return</span> <span class="n">datastream</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Creating new datastream&quot;</span>
+        <span class="n">datastream</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;load_avg&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="s">&quot;load_01&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">datastream</span>
-  <span class="k">except</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
-      <span class="k">print</span> <span class="s">&quot;Creating new datastream&quot;</span>
-    <span class="n">datastream</span> <span class="o">=</span> <span class="n">feed</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;load_avg&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="s">&quot;load_01&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">datastream</span>
+
 
 <span class="c"># main program entry point - runs continuously updating our datastream with the</span>
 <span class="c"># current 1 minute load average</span>
 <span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
-  <span class="k">print</span> <span class="s">&quot;Starting Xively tutorial script&quot;</span>
+    <span class="k">print</span> <span class="s">&quot;Starting Xively tutorial script&quot;</span>
 
-  <span class="n">feed</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">feeds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FEED_ID</span><span class="p">)</span>
+    <span class="n">feed</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">feeds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">FEED_ID</span><span class="p">)</span>
 
-  <span class="n">datastream</span> <span class="o">=</span> <span class="n">get_datastream</span><span class="p">(</span><span class="n">feed</span><span class="p">)</span>
-  <span class="n">datastream</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="bp">None</span>
-  <span class="n">datastream</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">datastream</span> <span class="o">=</span> <span class="n">get_datastream</span><span class="p">(</span><span class="n">feed</span><span class="p">)</span>
+    <span class="n">datastream</span><span class="o">.</span><span class="n">max_value</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">datastream</span><span class="o">.</span><span class="n">min_value</span> <span class="o">=</span> <span class="bp">None</span>
 
-  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-    <span class="n">load_avg</span> <span class="o">=</span> <span class="n">read_loadavg</span><span class="p">()</span>
+    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">load_avg</span> <span class="o">=</span> <span class="n">read_loadavg</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
-      <span class="k">print</span> <span class="s">&quot;Updating Xively feed with value: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">load_avg</span>
+        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Updating Xively feed with value: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">load_avg</span>
 
-    <span class="n">datastream</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="n">load_avg</span>
-    <span class="n">datastream</span><span class="o">.</span><span class="n">at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
-    <span class="n">datastream</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">current_value</span> <span class="o">=</span> <span class="n">load_avg</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+        <span class="n">datastream</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="n">run</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
 </pre></div>
 </td></tr></table></div>
 <p>Run the script:</p>
