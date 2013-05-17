@@ -97,7 +97,7 @@ window. This little script is designed to help you to configure your
 board, and lets you do things like set the locale and time zone and many
 other admin tasks. If you are trying to set up the board headless (i.e.
 without an attached monitor), then read on.  Otherwise, skip ahead to
-[Configuring the Raspberry Pi](#configure).
+:ref:`configure`.
 
 If you *don’t* have an external monitor, you'll instead need to
 configure the RPi by typed commands.  Doing this requires a little bit
@@ -132,8 +132,10 @@ At this point you should run:
 then you’ll be at the same stage as those booting with an attached
 monitor.
 
-Configure your Pi {#configure}
-------------------------------
+.. _configure:
+
+Configure your Pi
+-----------------
 
 .. image:: http://xively.com/images/tutorials/pi/raspi-config.png
 
