@@ -1,7 +1,8 @@
+from __future__ import print_function
+
 import xively
 import datetime
 import sys
-import time
 import xml.etree.ElementTree as etree
 
 XIVELY_API_KEY = "YOUR_API_KEY"
@@ -14,7 +15,7 @@ def read_data(stream):
             continue
         try:
             msg = etree.fromstring(data)
-        except ET.ParseError:
+        except etree.ParseError:
             print("Error parsing data: '{}'".format(data), end='',
                   file=sys.stderr)
             continue
@@ -33,8 +34,8 @@ def main(device='/dev/ttyUSB0'):
     for at, watts, tmpr in read_data(open(device, errors='ignore')):
         now = datetime.datetime.now()
         feed.datastreams = [
-            Datastream(id='tmpr', current_value=tmpr, at=now),
-            Datastream(id='watts', current_value=watts, at=now),
+            xively.Datastream(id='tmpr', current_value=tmpr, at=now),
+            xively.Datastream(id='watts', current_value=watts, at=now),
         ]
         feed.update()
         print(at, watts, tmpr)
