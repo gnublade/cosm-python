@@ -135,7 +135,7 @@ monitor.
 Configure your Pi {#configure}
 ------------------------------
 
-.. image: http://xively.com/images/tutorials/pi/raspi-config.png
+.. image:: http://xively.com/images/tutorials/pi/raspi-config.png
 
 At this point you can optionally change settings such as time zone and
 locale if you want, but the one important thing you should do is:
