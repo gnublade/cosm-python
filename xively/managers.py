@@ -54,7 +54,7 @@ class ManagerBase(object):
         return datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%fZ")
 
     def _prepare_params(self, params):
-        """Prepare parameters to be passed in query strings to the Xively API."""
+        """Prepare query string parameters for the Xively API."""
         params = dict(params)
         for name, value in params.items():
             if isinstance(value, datetime):

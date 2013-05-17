@@ -33,8 +33,9 @@ class Client(Session):
     r"""A Xively API Client object.
 
     This is instantiated with an API key which is used for all requests to the
-    Xively API.  It also defines a BASE_URL so that we can specify relative urls
-    when using the client (all requests via this client are going to Xively).
+    Xively API.  It also defines a BASE_URL so that we can specify relative
+    urls when using the client (all requests via this client are going to
+    Xively).
 
     :param key: A Xively API Key
     :type key: str
@@ -86,9 +87,9 @@ class Client(Session):
         >>> feed = xively.Feed(title="The Answer")
         >>> client._encode_data({'feed': feed}, sort_keys=True)
         '{"feed": {"title": "The Answer", "version": "1.0.0"}}'
-        >>> datastreams = [xively.Datastream(id="1"), xively.Datastream(id="2")]
+        >>> datastreams = [xively.Datastream(id=1), xively.Datastream(id="2")]
         >>> client._encode_data({'datastreams': datastreams})
-        '{"datastreams": [{"id": "1"}, {"id": "2"}]}'
+        '{"datastreams": [{"id": 1}, {"id": "2"}]}'
         """
         encoder = JSONEncoder(**kwargs) if kwargs else self._json_encoder
         return encoder.encode(data)

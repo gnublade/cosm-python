@@ -106,7 +106,8 @@ class Feed(Base):
         """
         if self._datastreams_manager is None:
             import xively.managers
-            self._datastreams_manager = xively.managers.DatastreamsManager(self)
+            manager = xively.managers.DatastreamsManager(self)
+            self._datastreams_manager = manager
         return self._datastreams_manager
 
     @datastreams.setter  # NOQA

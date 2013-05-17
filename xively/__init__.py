@@ -3,8 +3,9 @@
 __title__ = 'xively-python'
 __version__ = '0.1.0'
 
-__all__ = ['Client', 'XivelyAPIClient', 'Datapoint', 'Datastream', 'Feed', 'Key',
-           'Location', 'Permission', 'Resource', 'Trigger', 'Unit', 'Waypoint']
+__all__ = ['Client', 'XivelyAPIClient', 'Datapoint', 'Datastream', 'Feed',
+           'Key', 'Location', 'Permission', 'Resource', 'Trigger', 'Unit',
+           'Waypoint']
 
 from xively.api import XivelyAPIClient
 from xively.client import Client
