@@ -17,6 +17,7 @@ from mock import Mock, call, patch
 import fixtures
 import xively
 import xively.api
+import xively.client
 from xively.exceptions import ExceptionsWrapper, ResourceNotFound
 
 BASE_URL = "http://api.xively.com/v2"
@@ -924,3 +925,28 @@ class DoesNotExistExceptionTest(BaseTestCase):
     def test_delete_key(self):
         with self.assertRaises(ResourceNotFound):
             self.api.keys.delete(666)
+
+
+class JSONEncoderTest(unittest.TestCase):
+
+    def setUp(self):  # NOQA
+        self.encoder = xively.client.JSONEncoder(sort_keys=True)
+
+    def test_encode_datetime(self):
+        encoded = self.encoder.encode(datetime(2013, 5, 22, 18, 32, 10, 12345))
+        self.assertEqual(encoded, '"2013-05-22T18:32:10.012345Z"')
+
+    def test_encode_state(self):
+        class StatefulObject(object):
+            def __init__(self, **kwargs):
+                self.state = kwargs
+            def __getstate__(self):
+                return self.state
+        encoded = self.encoder.encode(StatefulObject(state='MA'))
+        self.assertEqual(encoded, '{"state": "MA"}')
+
+    def test_encode_default(self):
+        class OtherObject(object):
+            pass
+        with self.assertRaises(TypeError):
+            self.encoder.encode(OtherObject())
