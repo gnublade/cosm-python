@@ -5,7 +5,7 @@ from datetime import datetime
 
 try:
     from urlparse import urljoin
-except ImportError:
+except ImportError:  # pragma: no cover
     from urllib.parse import urljoin  # NOQA
 
 from xively.exceptions import wrap_exceptions

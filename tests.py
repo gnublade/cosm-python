@@ -135,12 +135,12 @@ class ClientTest(BaseTestCase):
 
 class FeedTest(BaseTestCase):
 
-    def test_create_feed(self):
-        feed = xively.Feed(title="Feed Test")
-        self.client.post('/v2/feeds', data=feed)
-        self.request.assert_called_with(
-            'POST', BASE_URL + '/feeds',
-            data='{"title": "Feed Test", "version": "1.0.0"}')
+    def test_init_feed(self):
+        datastream = xively.Datastream(id="0")
+        feed = xively.Feed(title="Feed Test", datastreams=[datastream])
+        self.assertEqual(feed.id, None)
+        self.assertEqual(feed.title, "Feed Test")
+        self.assertEqual(feed.datastreams[0], datastream)
 
     def test_update_feed(self):
         feed = self._create_feed(id='123', title="Office")
@@ -675,9 +675,11 @@ class TriggerManagerTest(BaseTestCase):
 class KeyTest(BaseTestCase):
 
     def test_create_key(self):
-        key = xively.Key("sharing key", [])
+        now = datetime.now()
+        key = xively.Key("sharing key", [], expires_at=now)
         self.assertEqual(key.label, "sharing key")
         self.assertEqual(key.permissions, [])
+        self.assertEqual(key.expires_at, now)
 
     def test_delete_key(self):
         key_id = "1nAYR5W8jUqiZJXIMwu3923Qfuq_lnFCDOKtf3kyw4g"
@@ -940,6 +942,7 @@ class JSONEncoderTest(unittest.TestCase):
         class StatefulObject(object):
             def __init__(self, **kwargs):
                 self.state = kwargs
+
             def __getstate__(self):
                 return self.state
         encoded = self.encoder.encode(StatefulObject(state='MA'))
