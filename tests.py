@@ -17,7 +17,7 @@ from mock import Mock, call, patch
 import fixtures
 import xively
 import xively.api
-from xively.exceptions import ResourceNotFound
+from xively.exceptions import ExceptionsWrapper, ResourceNotFound
 
 BASE_URL = "http://api.xively.com/v2"
 
@@ -789,6 +789,37 @@ class UnitTest(BaseTestCase):
         self.assertEqual(unit.label, 'Celsius')
         self.assertEqual(unit.type, 'basicSI')
         self.assertEqual(unit.symbol, 'C')
+
+
+class ExceptionsWrapperTest(unittest.TestCase):
+
+    def test_call_success(self):
+        @ExceptionsWrapper()
+        def func():
+            pass
+        try:
+            func()
+        except:
+            self.fail("No exception was expected")
+
+    def test_call_exception_ignored(self):
+        @ExceptionsWrapper()
+        def func():
+            error = requests.HTTPError()
+            error.response = requests.Response()
+            error.response.status_code = 408  # Teapot.
+            raise error
+        self.assertRaises(requests.HTTPError, func)
+
+    def test_call_exception_wrapped(self):
+        @ExceptionsWrapper()
+        def func():
+            error = requests.HTTPError()
+            error.response = requests.Response()
+            error.response.status_code = 404
+            error.response.raw = BytesIO(fixtures.NOT_FOUND_JSON)
+            raise error
+        self.assertRaises(ResourceNotFound, func)
 
 
 class DoesNotExistExceptionTest(BaseTestCase):
