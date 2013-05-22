@@ -17,6 +17,7 @@ from mock import Mock, call, patch
 import fixtures
 import xively
 import xively.api
+from xively.exceptions import ResourceNotFound
 
 BASE_URL = "http://api.xively.com/v2"
 
@@ -24,13 +25,13 @@ BASE_URL = "http://api.xively.com/v2"
 class RequestsFixtureMixin(object):
     """Mixin to mock request.Session.request from the xively module."""
 
-    def setUp(self, *args, **kwargs):
+    def setUp(self, *args, **kwargs):  # NOQA
         """Installs our own request handler."""
         patcher = patch('xively.client.Session.request')
         self.request = patcher.start()
     setUp.__test__ = False  # Don't test this method.
 
-    def tearDown(self, *args, **kwargs):
+    def tearDown(self, *args, **kwargs):  # NOQA
         """Ensures the original request object is reinstated."""
         self.request.stop()
     tearDown.__test__ = False  # Don't test this method.
@@ -43,7 +44,7 @@ class RequestsFixtureMixin(object):
 class BaseTestCase(RequestsFixtureMixin, unittest.TestCase):
     """Common base class for Xively api tests."""
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(BaseTestCase, self).setUp()
         self.api = xively.api.XivelyAPIClient("API_KEY")
         self.client = self.api.client
@@ -307,7 +308,7 @@ class FeedsManagerTest(BaseTestCase):
 
 class DatastreamTest(BaseTestCase):
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(DatastreamTest, self).setUp()
         self.feed = self._create_feed(id=7021, title="Rother")
 
@@ -342,7 +343,7 @@ class DatastreamTest(BaseTestCase):
 
 class DatastreamsManagerTest(BaseTestCase):
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(DatastreamsManagerTest, self).setUp()
         self.feed = self._create_feed(id=7021, title="Rother")
 
@@ -411,7 +412,7 @@ class DatastreamsManagerTest(BaseTestCase):
 
 class DatapointTest(BaseTestCase):
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(DatapointTest, self).setUp()
         self.feed = self._create_feed(id=1977, title="Rother")
         self.datastream = self._create_datastream(id='1', current_value="100")
@@ -444,7 +445,7 @@ class DatapointTest(BaseTestCase):
 
 class DatapointsManagerTest(BaseTestCase):
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(DatapointsManagerTest, self).setUp()
         self.feed = self._create_feed(id=1977, title="Rother")
         self.datastream = self._create_datastream(id='1', current_value="100")
@@ -545,7 +546,7 @@ class DatapointsManagerTest(BaseTestCase):
 
 class TriggerTest(BaseTestCase):
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(TriggerTest, self).setUp()
         self.feed = self._create_feed(id=8470, title="Dave")
         self.datastream = self._create_datastream(id="0")
@@ -792,7 +793,7 @@ class UnitTest(BaseTestCase):
 
 class DoesNotExistExceptionTest(BaseTestCase):
 
-    def setUp(self):
+    def setUp(self):  # NOQA
         super(DoesNotExistExceptionTest, self).setUp()
         self.response.status_code = 404
         self.response.raw = BytesIO(fixtures.NOT_FOUND_JSON)
