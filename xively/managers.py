@@ -8,6 +8,7 @@ try:
 except ImportError:
     from urllib.parse import urljoin  # NOQA
 
+from xively.exceptions import wrap_exceptions
 from xively.models import (
     Datapoint,
     Datastream,
@@ -128,8 +129,9 @@ class FeedsManager(ManagerBase):
             'datastreams': datastreams,
         }
         feed = self._coerce_feed(data)
-        response = self.client.post(self.url(), data=feed)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.post(self.url(), data=feed)
+            response.raise_for_status()
         location = response.headers['location']
         feed.feed = location
         feed.id = _id_from_url(location)
@@ -143,8 +145,9 @@ class FeedsManager(ManagerBase):
 
         """
         url = self.url(id_or_url)
-        response = self.client.put(url, data=kwargs)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.put(url, data=kwargs)
+            response.raise_for_status()
 
     def list(self, page=None, per_page=None, content=None, q=None, tag=None,
              user=None, units=None, status=None, order=None, show_user=None,
@@ -204,9 +207,10 @@ class FeedsManager(ManagerBase):
             ('distance', distance),
             ('distance_units', distance_units),
         ) if v is not None}
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        json = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            json = response.json()
         feeds = [self._coerce_feed(feed_data) for feed_data in json['results']]
         return feeds
 
@@ -260,9 +264,10 @@ class FeedsManager(ManagerBase):
             ('interval', interval),
         ) if v is not None}
         params = self._prepare_params(params)
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
         feed = self._coerce_feed(data)
         return feed
 
@@ -275,8 +280,9 @@ class FeedsManager(ManagerBase):
 
         """
         url = self.url(id_or_url)
-        response = self.client.delete(url)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.delete(url)
+            response.raise_for_status()
 
     def _coerce_feed(self, feed_data):
         """Returns a Feed object from a mapping object (dict)."""
@@ -410,8 +416,9 @@ class DatastreamsManager(Sequence, ManagerBase):
             'version': self.parent.version,
             'datastreams': [datastream],
         }
-        response = self.client.post(self.url(), data=data)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.post(self.url(), data=data)
+            response.raise_for_status()
         return datastream
 
     def update(self, datastream_id, **kwargs):
@@ -422,8 +429,9 @@ class DatastreamsManager(Sequence, ManagerBase):
 
         """
         url = self.url(datastream_id)
-        response = self.client.put(url, data=kwargs)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.put(url, data=kwargs)
+            response.raise_for_status()
 
     def list(self, datastreams=None, show_user=None):
         """Returns a list of datastreams for the parent feed object.
@@ -439,9 +447,10 @@ class DatastreamsManager(Sequence, ManagerBase):
             ('datastreams', datastreams),
             ('show_user', show_user),
         ) if v is not None}
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        json = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            json = response.json()
         for datastream_data in json.get('datastreams', []):
             datastream = self._coerce_datastream(datastream_data)
             yield datastream
@@ -486,9 +495,10 @@ class DatastreamsManager(Sequence, ManagerBase):
             ('interval', interval),
         ) if v is not None}
         params = self._prepare_params(params)
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
         datastream = self._coerce_datastream(data)
         return datastream
 
@@ -501,8 +511,9 @@ class DatastreamsManager(Sequence, ManagerBase):
 
         """
         url = self.url(id_or_url)
-        response = self.client.delete(url)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.delete(url)
+            response.raise_for_status()
 
     def _coerce_datapoints(self, datapoints_manager, datapoints_data):
         """Returns Datapoints objects from a list of mapping objects (dict)."""
@@ -609,8 +620,9 @@ class DatapointsManager(Sequence, ManagerBase):
         at = at or datetime.now()
         datapoint = Datapoint(at, value)
         payload = {'datapoints': [datapoint]}
-        response = self.client.post(self.url(), data=payload)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.post(self.url(), data=payload)
+            response.raise_for_status()
         return datapoint
 
     def update(self, at, value):
@@ -624,8 +636,9 @@ class DatapointsManager(Sequence, ManagerBase):
         """
         url = "{}/{}Z".format(self.url(), at.isoformat())
         payload = {'value': value}
-        response = self.client.put(url, data=payload)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.put(url, data=payload)
+            response.raise_for_status()
 
     def get(self, at):
         """Fetch and return a :class:`.Datapoint` at the given timestamp.
@@ -634,9 +647,10 @@ class DatapointsManager(Sequence, ManagerBase):
 
         """
         url = "{}/{}Z".format(self.url(), at.isoformat())
-        response = self.client.get(url)
-        response.raise_for_status()
-        data = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url)
+            response.raise_for_status()
+            data = response.json()
         data['at'] = self._parse_datetime(data['at'])
         return self._coerce_datapoint(data)
 
@@ -720,9 +734,10 @@ class DatapointsManager(Sequence, ManagerBase):
             ('interval', interval),
         ) if v is not None}
         params = self._prepare_params(params)
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        data = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            data = response.json()
         for datapoint_data in data.get('datapoints', []):
             datapoint_data['at'] = self._parse_datetime(datapoint_data['at'])
             yield self._coerce_datapoint(datapoint_data)
@@ -761,8 +776,9 @@ class DatapointsManager(Sequence, ManagerBase):
             url = "{}/{}Z".format(url, at.isoformat())
         elif params:
             params = self._prepare_params(params)
-        response = self.client.delete(url, params=params)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.delete(url, params=params)
+            response.raise_for_status()
 
     def _coerce_datapoint(self, d):
         if isinstance(d, Datapoint):
@@ -842,8 +858,9 @@ class TriggersManager(ManagerBase):
             'threshold_value': threshold_value,
         }
         trigger = self._coerce_trigger(data)
-        response = self.client.post(self.url(), data=trigger)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.post(self.url(), data=trigger)
+            response.raise_for_status()
         trigger._manager = self
         location = response.headers['location']
         trigger._data['id'] = int(location.rsplit('/', 1)[1])
@@ -856,9 +873,10 @@ class TriggersManager(ManagerBase):
 
         """
         url = self.url(id_or_url)
-        response = self.client.get(url)
-        response.raise_for_status()
-        data = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url)
+            response.raise_for_status()
+            data = response.json()
         data.pop('id')
         notified_at = data.pop('notified_at', None)
         user = data.pop('user', None)
@@ -879,8 +897,9 @@ class TriggersManager(ManagerBase):
 
         """
         url = self.url(id_or_url)
-        response = self.client.put(url, data=kwargs)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.put(url, data=kwargs)
+            response.raise_for_status()
 
     def list(self, feed_id=None):
         """Return a list of triggers.
@@ -893,9 +912,10 @@ class TriggersManager(ManagerBase):
         params = {k: v for k, v in (
             ('feed_id', feed_id),
         ) if v is not None}
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        json = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            json = response.json()
         for data in json:
             trigger = self._coerce_trigger(data)
             trigger._manager = self
@@ -910,8 +930,9 @@ class TriggersManager(ManagerBase):
 
         """
         url = self.url(id_or_url)
-        response = self.client.delete(url)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.delete(url)
+            response.raise_for_status()
 
     def _coerce_trigger(self, d):
         # Strip out the readonly fields and manually set later.
@@ -971,8 +992,9 @@ class KeysManager(ManagerBase):
         data = dict(label=label, permissions=permissions,
                     expires_at=expires_at, private_access=private_access)
         key = self._coerce_key(data)
-        response = self.client.post(self.url(), data={'key': key})
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.post(self.url(), data={'key': key})
+            response.raise_for_status()
         location = response.headers['Location']
         key.api_key = _id_from_url(location)
         return key
@@ -988,9 +1010,10 @@ class KeysManager(ManagerBase):
         params = {}
         if feed_id is not None:
             params['feed_id'] = feed_id
-        response = self.client.get(url, params=params)
-        response.raise_for_status()
-        json = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url, params=params)
+            response.raise_for_status()
+            json = response.json()
         for data in json['keys']:
             key = self._coerce_key(data)
             yield key
@@ -1007,9 +1030,10 @@ class KeysManager(ManagerBase):
 
         """
         url = self.url(key_id)
-        response = self.client.get(url)
-        response.raise_for_status()
-        data = response.json()
+        with wrap_exceptions:
+            response = self.client.get(url)
+            response.raise_for_status()
+            data = response.json()
         key = self._coerce_key(data['key'])
         return key
 
@@ -1024,8 +1048,9 @@ class KeysManager(ManagerBase):
 
         """
         url = self.url(key_id)
-        response = self.client.delete(url)
-        response.raise_for_status()
+        with wrap_exceptions:
+            response = self.client.delete(url)
+            response.raise_for_status()
 
     def _coerce_key(self, data):
         api_key = data.get('api_key')

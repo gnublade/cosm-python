@@ -788,3 +788,107 @@ class UnitTest(BaseTestCase):
         self.assertEqual(unit.label, 'Celsius')
         self.assertEqual(unit.type, 'basicSI')
         self.assertEqual(unit.symbol, 'C')
+
+
+class DoesNotExistExceptionTest(BaseTestCase):
+
+    def setUp(self):
+        super(DoesNotExistExceptionTest, self).setUp()
+        self.response.status_code = 404
+        self.response.raw = BytesIO(fixtures.NOT_FOUND_JSON)
+        self.feed = self._create_feed(id=7021, title="Rother")
+        self.datastream = self._create_datastream(id='1')
+
+    def test_get_feed(self):
+        self.assertRaises(ResourceNotFound, self.api.feeds.get, 666)
+
+    def test_update_feed(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.feeds.update(51, title="Doesn't exist")
+
+    def test_delete_feed(self):
+        self.assertRaises(ResourceNotFound, self.api.feeds.delete, 51)
+
+    def test_mobile_feed(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.feeds.get(666, duration='1day')
+
+    def test_create_datastream(self):
+        with self.assertRaises(ResourceNotFound):
+            self.feed.datastreams.create(id="feed_doesnt_exist")
+
+    def test_update_datastream(self):
+        with self.assertRaises(ResourceNotFound):
+            self.feed.datastreams.update("datastream_doesnt_exist")
+
+    def test_list_datastreams(self):
+        with self.assertRaises(ResourceNotFound):
+            list(self.feed.datastreams.list())
+
+    def test_view_datastream(self):
+        with self.assertRaises(ResourceNotFound):
+            self.feed.datastreams.get("datastream_doesnt_exist")
+
+    def test_delete_datastream(self):
+        with self.assertRaises(ResourceNotFound):
+            self.feed.datastreams.delete("datastream_doesnt_exist")
+
+    def test_create_datapoint(self):
+        with self.assertRaises(ResourceNotFound):
+            self.datastream.datapoints.create(value="42")
+
+    def test_update_datapoint(self):
+        now = datetime.now()
+        with self.assertRaises(ResourceNotFound):
+            self.datastream.datapoints.update(at=now, value="42")
+
+    def test_datapoint_history(self):
+        with self.assertRaises(ResourceNotFound):
+            list(self.datastream.datapoints.history())
+
+    def test_view_datapoint(self):
+        now = datetime.now()
+        with self.assertRaises(ResourceNotFound):
+            self.datastream.datapoints.get(at=now)
+
+    def test_delete_datapoint(self):
+        now = datetime.now()
+        with self.assertRaises(ResourceNotFound):
+            self.datastream.datapoints.delete(at=now)
+
+    def test_create_trigger(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.triggers.create(666, "0", url='http://example.com',
+                                     trigger_type='lt')
+
+    def test_view_trigger(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.triggers.get(666)
+
+    def test_update_trigger(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.triggers.update(666, threshold_value="20.0")
+
+    def test_list_triggers_for_feed(self):
+        with self.assertRaises(ResourceNotFound):
+            list(self.api.triggers.list())
+
+    def test_delete_trigger(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.triggers.delete(666)
+
+    def test_create_key(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.keys.create("doesn't exist", [])
+
+    def test_list_keys(self):
+        with self.assertRaises(ResourceNotFound):
+            list(self.api.keys.list())
+
+    def test_view_key(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.keys.get(666)
+
+    def test_delete_key(self):
+        with self.assertRaises(ResourceNotFound):
+            self.api.keys.delete(666)

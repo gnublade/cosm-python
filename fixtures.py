@@ -632,6 +632,13 @@ GET_KEY_JSON = b'''
 }
 '''
 
+NOT_FOUND_JSON = b'''
+{
+  "title":"Not found",
+  "errors":"I'm sorry we are unable to find the resource you are looking for."
+}
+'''
+
 
 def handle_request(method, url, params=None, *args, **kwargs):
     response = requests.Response()
