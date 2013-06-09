@@ -725,6 +725,26 @@ class KeyManagerTest(BaseTestCase):
         self.assertEqual(key.api_key,
                          "1nAYR5W8jUqiZJXIMwu3923Qfuq_lnFCDOKtf3kyw4g")
 
+    def test_create_key_from_dict(self):
+        self.response.status_code = 201
+        self.response.headers['Location'] = (
+            BASE_URL + '/keys/1nAYR5W8jUqiZJXIMwu3923Qfuq_lnFCDOKtf3kyw4g')
+        key = self.api.keys.create(
+            label="sharing key",
+            private_access=True,
+            permissions=[{
+                'access_methods': ['put'],
+                'source_ip': "128.44.98.129",
+                'resources': [{'feed_id': 504}]
+            },
+                xively.Permission(access_methods=['get']),
+            ])
+        self.request.assert_called_with(
+            'POST', BASE_URL + '/keys',
+            data=self._sorted_json(fixtures.CREATE_KEY_JSON))
+        self.assertEqual(key.api_key,
+                         "1nAYR5W8jUqiZJXIMwu3923Qfuq_lnFCDOKtf3kyw4g")
+
     def test_list_keys(self):
         self.response.raw = BytesIO(fixtures.LIST_KEYS_JSON)
         keys = list(self.api.keys.list())
