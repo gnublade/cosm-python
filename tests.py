@@ -18,6 +18,7 @@ import fixtures
 import xively
 import xively.api
 import xively.client
+import xively.managers
 from xively.exceptions import ExceptionsWrapper, ResourceNotFound
 
 BASE_URL = "http://api.xively.com/v2"
@@ -131,6 +132,17 @@ class ClientTest(BaseTestCase):
             data=json.dumps(
                 {"title": "This is an object", "value": 42},
                 sort_keys=True))
+
+
+class ManagerTest(BaseTestCase):
+
+    def test_base_url(self):
+        class Manager(xively.managers.ManagerBase):
+            pass
+        manager = Manager()
+        url = "http://www.example.com/path/to/resource"
+        manager.base_url = url
+        self.assertEqual(manager.base_url, url)
 
 
 class FeedTest(BaseTestCase):

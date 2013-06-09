@@ -31,10 +31,8 @@ class ManagerBase(object):
         if getattr(self, '_base_url', None) is not None:
             return self._base_url
         parent = getattr(self, 'parent', None)
-        if parent is None:
-            return
         manager = getattr(parent, '_manager', None)
-        if manager is None:
+        if parent is None or manager is None:
             return
         base_url = manager.url(parent.id) + '/' + self.resource
         return base_url
