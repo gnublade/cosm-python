@@ -376,9 +376,6 @@ class DatastreamsManager(Sequence, ManagerBase):
         feed_manager = getattr(feed, '_manager', None)
         self.client = getattr(feed_manager, 'client', None)
 
-    def __contains__(self, value):
-        return value in self.datastreams['datastreams']
-
     def __getitem__(self, item):
         return self._datastreams[item]
 
